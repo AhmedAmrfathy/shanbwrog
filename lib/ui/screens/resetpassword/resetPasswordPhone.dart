@@ -1,19 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordCode.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/formitem.dart';
 
-class ResetPasswordMail extends StatefulWidget {
-  static const String ref = 'resetmailref';
+class ResetPasswordPhone extends StatefulWidget {
+  static const String ref = 'resetphoneref';
 
   @override
-  _ResetPasswordMailState createState() => _ResetPasswordMailState();
+  _ResetPasswordPhoneState createState() => _ResetPasswordPhoneState();
 }
 
-class _ResetPasswordMailState extends State<ResetPasswordMail> {
-  TextEditingController _email = TextEditingController();
+class _ResetPasswordPhoneState extends State<ResetPasswordPhone> {
+  TextEditingController _phone = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,29 +73,53 @@ class _ResetPasswordMailState extends State<ResetPasswordMail> {
             height: 28,
           ),
           Text(
-            tr('entermail'),
+            tr('enterphone'),
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.black, fontSize: 22),
           ),
           SizedBox(
             height: 28,
           ),
-          FormItemWidget(
-            fill: true,
-            fillingcolor: Colors.white,
-            bordercolor: Colors.grey,
-            enablingborder: true,
-            borderRadious: 12,
-            label: tr('email'),
-            labelStyle: TextStyle(color: Colors.grey, fontSize: 20),
-            textEditingController: _email,
+          InternationalPhoneNumberInput(
+            errorMessage: tr('phonevalidate'),
+            countries: ['SA'],
+            inputDecoration: InputDecoration(
+                labelText: tr('phonenumber'),
+                labelStyle: TextStyle(color: Colors.grey, fontSize: 17),
+                filled: true,
+                fillColor: Colors.white,
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black26)),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: MySettings.lightgrey),
+                    borderRadius: BorderRadius.circular(12))),
+            onInputChanged: (PhoneNumber number) {
+              print(number.phoneNumber);
+            },
+            locale: EasyLocalization.of(context)!.currentLocale!.languageCode,
+            onInputValidated: (bool value) {
+              print(value);
+            },
+            selectorConfig: SelectorConfig(
+              selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+            ),
+            ignoreBlank: false,
+            autoValidateMode: AutovalidateMode.onUserInteraction,
+            selectorTextStyle: TextStyle(color: Colors.black),
+            textFieldController: _phone,
+            formatInput: false,
+            keyboardType:
+                TextInputType.numberWithOptions(signed: true, decimal: true),
+            onSaved: (PhoneNumber number) {
+              print('On Saved: $number');
+            },
           ),
           SizedBox(
             height: 28,
           ),
           CustomButton(tr('send'), () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => ResetPasswordCode()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (ctx) => ResetPasswordCode()));
           })
         ],
       ),
