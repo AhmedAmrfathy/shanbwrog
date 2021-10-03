@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/ui/screens/register/registerSelectCategoryType.dart';
 import 'package:shanbwrog/ui/screens/register/widgets/radiowidget.dart';
-
 import '../loginScreen.dart';
 
 class RegisterSelectUserType extends StatefulWidget {
@@ -90,8 +89,8 @@ class _RegisterSelectUserTypeState extends State<RegisterSelectUserType> {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) =>
-                                    RegisterSelectCategoryType('provider')));
+                                builder: (ctx) => RegisterSelectCategoryType(
+                                    _isnormalUser ? '' : 'provider')));
                           },
                           child: Container(
                             width: devicesize.width * .8,
@@ -109,24 +108,23 @@ class _RegisterSelectUserTypeState extends State<RegisterSelectUserType> {
                               children: [
                                 Expanded(
                                     child: Container(
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 15),
-                                        child: Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        tr('next'),
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 22),
-                                      ),
-                                    ],
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(right: 15, left: 15),
+                                    child: Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 )),
+                                Expanded(
+                                  child: Text(
+                                    tr('next'),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 22),
+                                  ),
+                                ),
                                 Expanded(child: Container()),
                               ],
                             ),
@@ -146,11 +144,13 @@ class _RegisterSelectUserTypeState extends State<RegisterSelectUserType> {
                             SizedBox(
                               width: 3,
                             ),
-                            GestureDetector(onTap: (){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
-                                return LoginScreen();
-                              }));
-                            },
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (ctx) {
+                                  return LoginScreen();
+                                }));
+                              },
                               child: Text(
                                 tr('login'),
                                 style: TextStyle(

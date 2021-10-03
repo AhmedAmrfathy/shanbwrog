@@ -6,11 +6,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/models/reservation.dart';
 import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/providers/home.dart';
+import 'package:shanbwrog/providers/reservations.dart';
+import 'package:shanbwrog/providers/serviceprovider/service_provider_offers.dart';
 import 'package:shanbwrog/ui/screens/loginScreen.dart';
 import 'package:shanbwrog/ui/screens/resetpassword/resetNewPassword.dart';
-import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordMail.dart';
+import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordPhone.dart';
 import 'package:shanbwrog/ui/screens/spashScreen.dart';
 
 void main() async {
@@ -35,11 +38,30 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => AuthProvider(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AuthProvider, HomeProvider>(
           create: (ctx) => HomeProvider(),
+          update: (ctx, auth, home) => home!
+            ..update(
+                newtoken: auth.userModel == null ? null : auth.userModel.token),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, ReservationsProvider>(
+          create: (ctx) => ReservationsProvider(),
+          update: (ctx, auth, reservation) => reservation!
+            ..update(
+                newtoken: auth.userModel == null ? null : auth.userModel.token),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider,
+            ServiceProviderOffersProvider>(
+          create: (ctx) => ServiceProviderOffersProvider(),
+          update: (ctx, auth, serviceprovideroffersprovider) =>
+              serviceprovideroffersprovider!
+                ..update(
+                    newtoken:
+                        auth.userModel == null ? null : auth.userModel.token),
         ),
       ],
       child: MaterialApp(
+        theme: ThemeData(fontFamily: 'Cairo'),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         debugShowCheckedModeBanner: false,
@@ -61,7 +83,7 @@ class MyApp extends StatelessWidget {
           MyHomePage.ref: (ctx) => MyHomePage(),
           SplashScreen.ref: (ctx) => SplashScreen(),
           LoginScreen.ref: (ctx) => LoginScreen(),
-          ResetPasswordMail.ref: (ctx) => ResetPasswordMail(),
+          ResetPasswordPhone.ref: (ctx) => ResetPasswordPhone(),
           ResetNewPassword.ref: (ctx) => ResetNewPassword()
         },
       ),

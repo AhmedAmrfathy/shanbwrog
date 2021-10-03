@@ -18,7 +18,6 @@ class RadioWidget extends StatelessWidget {
     return Container(
       width: devicesize.width * .8,
       padding: EdgeInsets.all(15),
-      height: 60,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),

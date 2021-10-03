@@ -15,9 +15,7 @@ class _ServiceProviderReservationFragmentState
     extends State<ServiceProviderReservationFragment> {
   int _newindex = 0;
   List<Reservation> reservations = [
-    Reservation(type: 1),
-    Reservation(type: 2),
-    Reservation(type: 3)
+
   ];
 
   @override
@@ -39,7 +37,6 @@ class _ServiceProviderReservationFragmentState
               ),
               Container(
                 width: devicesize.width * .9,
-                height: 45,
                 padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                     border: Border.all(color: MySettings.maincolor),
@@ -179,7 +176,8 @@ class _ServiceProviderReservationFragmentState
                         );
                       })
                   : _newindex == 1
-                      ? ListView.builder(
+                      ?
+              ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: reservations.length,
@@ -234,7 +232,7 @@ class _ServiceProviderReservationFragmentState
                                             BorderRadius.circular(15)),
                                     child: Center(
                                       child: Text(
-                                        tr('finishreservation'),
+                                        tr('finishreservation'),textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Colors.white),
@@ -245,76 +243,77 @@ class _ServiceProviderReservationFragmentState
                               ),
                             );
                           })
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: reservations.length,
-                          itemBuilder: (ctx, index) {
-                            return Container(
-                              width: devicesize.width * .8,
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                  border: Border.all(
-                                      color: reservations[index].type == 1
-                                          ? Colors.yellow
-                                          : reservations[index].type == 2
-                                              ? Colors.green
-                                              : Colors.red)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'إسم الصالون او المركز',
-                                    style: TextStyle(
-                                        fontSize: 19,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'السبت 24 -5 -2012',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      IconButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          icon: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 25,
-                                          ))
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 110,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        color: Color.fromRGBO(254, 224, 224, 1),
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    child: Center(
-                                      child: Text(
-                                        tr('completed'),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.red),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          })
+                      : Container()
+              // ListView.builder(
+              //             shrinkWrap: true,
+              //             physics: NeverScrollableScrollPhysics(),
+              //             itemCount: reservations.length,
+              //             itemBuilder: (ctx, index) {
+              //               return Container(
+              //                 width: devicesize.width * .8,
+              //                 margin: EdgeInsets.symmetric(vertical: 10),
+              //                 padding: EdgeInsets.all(15),
+              //                 decoration: BoxDecoration(
+              //                     borderRadius:
+              //                         BorderRadius.all(Radius.circular(12)),
+              //                     border: Border.all(
+              //                         color: reservations[index].type == 1
+              //                             ? Colors.yellow
+              //                             : reservations[index].type == 2
+              //                                 ? Colors.green
+              //                                 : Colors.red)),
+              //                 child: Column(
+              //                   crossAxisAlignment: CrossAxisAlignment.start,
+              //                   children: [
+              //                     Text(
+              //                       'إسم الصالون او المركز',
+              //                       style: TextStyle(
+              //                           fontSize: 19,
+              //                           color: Colors.black,
+              //                           fontWeight: FontWeight.bold),
+              //                     ),
+              //                     Row(
+              //                       children: [
+              //                         Expanded(
+              //                           child: Text(
+              //                             'السبت 24 -5 -2012',
+              //                             style: TextStyle(
+              //                                 fontSize: 15,
+              //                                 color: Colors.grey,
+              //                                 fontWeight: FontWeight.w600),
+              //                           ),
+              //                         ),
+              //                         IconButton(
+              //                             onPressed: () {
+              //                               Navigator.of(context).pop();
+              //                             },
+              //                             icon: Icon(
+              //                               Icons.delete,
+              //                               color: Colors.red,
+              //                               size: 25,
+              //                             ))
+              //                       ],
+              //                     ),
+              //                     Container(
+              //                       width: 110,
+              //                       height: 40,
+              //                       decoration: BoxDecoration(
+              //                           color: Color.fromRGBO(254, 224, 224, 1),
+              //                           borderRadius:
+              //                               BorderRadius.circular(15)),
+              //                       child: Center(
+              //                         child: Text(
+              //                           tr('completed'),
+              //                           style: TextStyle(
+              //                               fontWeight: FontWeight.w600,
+              //                               color: Colors.red),
+              //                         ),
+              //                       ),
+              //                     )
+              //                   ],
+              //                 ),
+              //               );
+              //             })
             ],
           ),
         ),

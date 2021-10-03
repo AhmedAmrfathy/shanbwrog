@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FormItemWidget extends StatelessWidget {
-  final String Function(String? x)? validation;
-  final String Function(String? x)? onsave;
-  final String Function(String? x)? onchange;
+  final String? Function(String? x)? validation;
+  final String? Function(String? x)? onsave;
+  final String? Function(String? x)? onchange;
   final Function()? oncomplete;
   final Function()? ontap;
   final double? width;

@@ -6,7 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
-import 'package:shanbwrog/ui/search_map_place/search_map_place.dart';
+import 'package:shanbwrog/ui/screens/map/search_map_place/search_map_place.dart';
 
 class MapRegisteration extends StatefulWidget {
   @override

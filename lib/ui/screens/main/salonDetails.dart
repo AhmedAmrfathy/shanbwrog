@@ -251,9 +251,11 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                         SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          e,
-                          style: TextStyle(color: Colors.black, fontSize: 17),
+                        Expanded(
+                          child: Text(
+                            e,
+                            style: TextStyle(color: Colors.black, fontSize: 17),
+                          ),
                         ),
                       ],
                     ),
@@ -276,7 +278,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
               Container(
                 width: devicesize.width,
                 height: devicesize.width > 768
-                    ? devicesize.height*.6
+                    ? devicesize.height * .6
                     : devicesize.height * .3,
                 child: Stack(
                   fit: StackFit.expand,
@@ -325,7 +327,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Column(
                   children: [
                     Container(

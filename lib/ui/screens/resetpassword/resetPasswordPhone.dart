@@ -1,10 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordCode.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/formitem.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
+import 'package:shanbwrog/ui/widgets/my_loading_widget.dart';
 
 class ResetPasswordPhone extends StatefulWidget {
   static const String ref = 'resetphoneref';
@@ -15,10 +19,12 @@ class ResetPasswordPhone extends StatefulWidget {
 
 class _ResetPasswordPhoneState extends State<ResetPasswordPhone> {
   TextEditingController _phone = TextEditingController();
+  String phonewithcode='';
 
   @override
   Widget build(BuildContext context) {
     final devicesize = MediaQuery.of(context).size;
+    final authprovider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,47 +86,68 @@ class _ResetPasswordPhoneState extends State<ResetPasswordPhone> {
           SizedBox(
             height: 28,
           ),
-          InternationalPhoneNumberInput(
-            errorMessage: tr('phonevalidate'),
-            countries: ['SA'],
-            inputDecoration: InputDecoration(
-                labelText: tr('phonenumber'),
-                labelStyle: TextStyle(color: Colors.grey, fontSize: 17),
-                filled: true,
-                fillColor: Colors.white,
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black26)),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: MySettings.lightgrey),
-                    borderRadius: BorderRadius.circular(12))),
-            onInputChanged: (PhoneNumber number) {
-              print(number.phoneNumber);
-            },
-            locale: EasyLocalization.of(context)!.currentLocale!.languageCode,
-            onInputValidated: (bool value) {
-              print(value);
-            },
-            selectorConfig: SelectorConfig(
-              selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 50),
+            child: InternationalPhoneNumberInput(
+              errorMessage: tr('phonevalidate'),
+              countries: ['SA'],
+              inputDecoration: InputDecoration(
+                  labelText: tr('phonenumber'),
+                  labelStyle: TextStyle(color: Colors.grey, fontSize: 17),
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black26)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: MySettings.lightgrey),
+                      borderRadius: BorderRadius.circular(12))),
+              onInputChanged: (PhoneNumber number) {
+                print(number.phoneNumber);
+                phonewithcode = number.phoneNumber!;
+              },
+              locale: EasyLocalization.of(context)!.currentLocale!.languageCode,
+              onInputValidated: (bool value) {
+                print(value);
+              },
+              selectorConfig: SelectorConfig(
+                selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+              ),
+              ignoreBlank: false,
+              autoValidateMode: AutovalidateMode.onUserInteraction,
+              selectorTextStyle: TextStyle(color: Colors.black),
+              textFieldController: _phone,
+              formatInput: false,
+              keyboardType:
+                  TextInputType.numberWithOptions(signed: true, decimal: true),
+              onSaved: (PhoneNumber number) {
+                print('On Saved: $number');
+              },
             ),
-            ignoreBlank: false,
-            autoValidateMode: AutovalidateMode.onUserInteraction,
-            selectorTextStyle: TextStyle(color: Colors.black),
-            textFieldController: _phone,
-            formatInput: false,
-            keyboardType:
-                TextInputType.numberWithOptions(signed: true, decimal: true),
-            onSaved: (PhoneNumber number) {
-              print('On Saved: $number');
-            },
           ),
           SizedBox(
             height: 28,
           ),
-          CustomButton(tr('send'), () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (ctx) => ResetPasswordCode()));
-          })
+          Consumer<AuthProvider>(
+            builder: (ctx, data, ch) {
+              return data.isloadingSendCode
+                  ? myLoadingWidget(context, MySettings.maincolor)
+                  : CustomButton(tr('send'), () async {
+                      print(_phone.text);
+                      final result = await authprovider.sendCode(
+                          context,
+                          EasyLocalization.of(context)!
+                              .currentLocale!
+                              .languageCode,
+                          _phone.text);
+                      if (result['status'] == true) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ResetPasswordCode(phonewithcode)));
+                      } else {
+                        showMyToast(context, result['error'], 'error');
+                      }
+                    });
+            },
+          ),
         ],
       ),
     );

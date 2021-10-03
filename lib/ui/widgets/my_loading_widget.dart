@@ -55,7 +55,7 @@ class CupertinoBreathe extends StatefulWidget {
 
 class _CupertinoBreatheState extends State<CupertinoBreathe>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {

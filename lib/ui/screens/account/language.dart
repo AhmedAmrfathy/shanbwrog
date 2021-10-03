@@ -14,6 +14,10 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
   @override
   Widget build(BuildContext context) {
     final devicesize = MediaQuery.of(context).size;
+    radiogroup =
+        EasyLocalization.of(context)!.currentLocale!.languageCode == 'ar'
+            ? 1
+            : 2;
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -57,11 +61,13 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                             groupValue: radiogroup,
                             splashRadius: 30,
                             onChanged: (int? newvalue) {
-                              setState(() {
-                                radiogroup = newvalue;
-                              });
-                              EasyLocalization.of(context)!
-                                  .setLocale(Locale('ar'));
+                              if (newvalue != radiogroup) {
+                                setState(() {
+                                  radiogroup = newvalue;
+                                });
+                                EasyLocalization.of(context)!
+                                    .setLocale(Locale('ar'));
+                              }
                             },
                           ),
                         ),
@@ -90,11 +96,14 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                             groupValue: radiogroup,
                             splashRadius: 30,
                             onChanged: (int? newvalue) {
-                              setState(() {
-                                radiogroup = newvalue;
-                              });
-                              EasyLocalization.of(context)!
-                                  .setLocale(Locale('en', 'US'));
+                              if (newvalue == radiogroup) {
+                              } else {
+                                setState(() {
+                                  radiogroup = newvalue;
+                                });
+                                EasyLocalization.of(context)!
+                                    .setLocale(Locale('en', 'US'));
+                              }
                             },
                           ),
                         ),

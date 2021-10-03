@@ -1,12 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/models/reservation.dart';
+import 'package:shanbwrog/providers/reservations.dart';
 import 'package:shanbwrog/ui/general/appbar.dart';
 import 'package:shanbwrog/ui/screens/main/myreservations.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
+import 'package:shanbwrog/ui/widgets/my_loading_widget.dart';
 
 class PaymentScreen extends StatefulWidget {
+  Map<String, dynamic> bodyData;
+
+  PaymentScreen(this.bodyData);
+
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
@@ -136,52 +144,77 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 SizedBox(
                   height: devicesize.height * .04,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (ctx) {
-                      return SuccessPayment();
-                    }));
-                  },
-                  child: Container(
-                    width: devicesize.width * .8,
-                    height: 70,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              MySettings.maincolor,
-                              MySettings.secondarycolor
-                            ])),
-                    child: Row(
-                      children: [
-                        Expanded(
+                Consumer<ReservationsProvider>(
+                  builder: (ctx, data, ch) {
+                    return data.isloadingAddingReservation
+                        ? myLoadingWidget(context, MySettings.maincolor)
+                        : GestureDetector(
+                            onTap: () async {
+                              widget.bodyData['payment_method'] =
+                                  radiogroup == 0
+                                      ? 'cache'
+                                      : radiogroup == 1
+                                          ? 'visa'
+                                          : 'mada';
+                              final result =
+                                  await Provider.of<ReservationsProvider>(
+                                          context,
+                                          listen: false)
+                                      .addReservation(
+                                          context: context,
+                                          lang: EasyLocalization.of(context)!
+                                              .currentLocale!
+                                              .languageCode,
+                                          bodydata: widget.bodyData);
+                              if (result['status'] == true) {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (ctx) {
+                                  return SuccessPayment();
+                                }));
+                              } else {
+                                showMyToast(context, result['error'], 'error');
+                              }
+                            },
                             child: Container(
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 15),
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.white,
-                                ),
+                              width: devicesize.width * .8,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        MySettings.maincolor,
+                                        MySettings.secondarycolor
+                                      ])),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Container(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(right: 15, left: 15),
+                                      child: Icon(
+                                        Icons.arrow_back_ios,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )),
+                                  Expanded(
+                                    child: Text(
+                                      tr('next'),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                  ),
+                                  Expanded(child: Container()),
+                                ],
                               ),
-                              Spacer(),
-                              Text(
-                                tr('next'),
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 22),
-                              ),
-                            ],
-                          ),
-                        )),
-                        Expanded(child: Container()),
-                      ],
-                    ),
-                  ),
-                )
+                            ),
+                          );
+                  },
+                ),
               ],
             ),
           ),

@@ -44,6 +44,7 @@ class AddService extends StatelessWidget {
                 Container(
                   width: devicesize.width * .8,
                   child: DropdownButtonFormField(
+                      isExpanded: true,
                       hint: Text(
                         tr('service'),
                         style: TextStyle(color: Colors.grey),
@@ -83,6 +84,7 @@ class AddService extends StatelessWidget {
                 Container(
                   width: devicesize.width * .8,
                   child: DropdownButtonFormField(
+                      isExpanded: true,
                       hint: Text(
                         tr('category'),
                         style: TextStyle(color: Colors.grey),

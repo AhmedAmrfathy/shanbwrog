@@ -7,8 +7,10 @@ import 'package:shanbwrog/ui/screens/register/widgets/radiowidget.dart';
 import '../loginScreen.dart';
 
 class RegisterSelectCategoryType extends StatefulWidget {
-  final String  ? usertype;
+  final String? usertype;
+
   RegisterSelectCategoryType(this.usertype);
+
   static const String ref = 'RegisterSelectCategoryTyperef';
 
   @override
@@ -91,7 +93,12 @@ class _RegisterSelectCategoryTypeState
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => RegisterAsProvider('provider')));
+                                builder: (ctx) => RegisterAsProvider(
+                                      widget.usertype,
+                                      _isshanb,
+                                      isnormaluser:
+                                          widget.usertype != 'provider',
+                                    )));
                           },
                           child: Container(
                             width: devicesize.width * .8,
@@ -109,24 +116,23 @@ class _RegisterSelectCategoryTypeState
                               children: [
                                 Expanded(
                                     child: Container(
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 15),
-                                        child: Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        tr('next'),
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 22),
-                                      ),
-                                    ],
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(right: 15, left: 15),
+                                    child: Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 )),
+                                Expanded(
+                                  child: Text(
+                                    tr('next'),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 22),
+                                  ),
+                                ),
                                 Expanded(child: Container()),
                               ],
                             ),

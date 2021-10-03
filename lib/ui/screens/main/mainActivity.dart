@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/ui/screens/account/notifications.dart';
 import 'package:shanbwrog/ui/screens/main/reservationInfo.dart';
 import 'package:shanbwrog/ui/screens/main/searchFragment.dart';
 import 'package:shanbwrog/ui/serviceprovider/reservationFragment.dart';
@@ -12,9 +13,9 @@ import 'myFavourite.dart';
 import 'myreservations.dart';
 
 class MainActivity extends StatefulWidget {
-  final String? usertype;
+  final String usertype;
 
-  MainActivity({this.usertype});
+  MainActivity(this.usertype);
 
   @override
   _MainActivityState createState() => _MainActivityState();
@@ -50,7 +51,11 @@ class _MainActivityState extends State<MainActivity> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                  return Notifications();
+                }));
+              },
               icon: Icon(
                 Icons.notifications,
                 color: Colors.black,

@@ -97,6 +97,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 18,
             ),
             InternationalPhoneNumberInput(
+              errorMessage: tr('phonevalidate'),
+              countries: ['SA'],
               inputDecoration: InputDecoration(
                   labelText: tr('phonenumber'),
                   labelStyle: TextStyle(color: Colors.grey, fontSize: 17),
@@ -212,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 18,
             ),
             CustomButton(tr('changepassword'), () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (txc){
+              Navigator.of(context).push(MaterialPageRoute(builder: (txc) {
                 return ChangePassword();
               }));
             }),

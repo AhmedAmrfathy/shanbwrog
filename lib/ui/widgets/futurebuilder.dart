@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:provider/provider.dart';
-import 'package:tabebcom/general/mysettings.dart';
-import 'package:tabebcom/providers/doctors.dart';
+import 'package:shanbwrog/Settings/MySettings.dart';
 
 import 'emptyitem.dart';
-import 'helper_widgets/my_loading_widget.dart';
+import 'my_loading_widget.dart';
 
 class ApiFutureBuilder extends StatelessWidget {
-  final Future future;
-  final Widget consumer;
+  final Future? future;
+  final Widget? consumer;
 
   ApiFutureBuilder({this.future, this.consumer});
 
@@ -17,8 +15,9 @@ class ApiFutureBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: future,
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+        builder: (ctx, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.connectionState == ConnectionState.none) {
             return Material(
               child: Padding(
                 padding: EdgeInsets.only(top: 50),
@@ -33,8 +32,10 @@ class ApiFutureBuilder extends StatelessWidget {
                 child: ExplainItem(snapshot.data['error']),
               );
             } else {
-              return consumer;
+              return consumer!;
             }
+          } else {
+            return Container();
           }
         });
   }

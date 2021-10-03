@@ -25,7 +25,7 @@ class SearchFragment extends StatelessWidget {
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black12),
                   color: MySettings.lightgrey,
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(22)),
               child: Row(
                 children: [
                   Flexible(
@@ -33,7 +33,7 @@ class SearchFragment extends StatelessWidget {
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: tr('searchwhatyouwant'),
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 17)),
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
                   )),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12),

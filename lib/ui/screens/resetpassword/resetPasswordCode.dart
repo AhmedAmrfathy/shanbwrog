@@ -3,13 +3,21 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/ui/screens/resetpassword/resetNewPassword.dart';
-import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordMail.dart';
+import 'package:shanbwrog/ui/screens/resetpassword/resetPasswordPhone.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/formitem.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
+import 'package:shanbwrog/ui/widgets/my_loading_widget.dart';
 
 class ResetPasswordCode extends StatefulWidget {
+  final String phone;
+
+  ResetPasswordCode(this.phone);
+
   static const String ref = 'resetcoderef';
 
   @override
@@ -18,13 +26,14 @@ class ResetPasswordCode extends StatefulWidget {
 
 class _ResetPasswordCodeState extends State<ResetPasswordCode> {
   StreamController<ErrorAnimationType>? errorController;
-  TextEditingController? _pin;
+  TextEditingController _pin = TextEditingController();
   bool hasError = false;
   TextEditingController _email = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final devicesize = MediaQuery.of(context).size;
+    final authprovider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,7 +96,7 @@ class _ResetPasswordCodeState extends State<ResetPasswordCode> {
             height: 10,
           ),
           Text(
-            'Ahmed@yahoo.com',
+            widget.phone,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 17),
           ),
@@ -122,6 +131,22 @@ class _ResetPasswordCodeState extends State<ResetPasswordCode> {
               errorAnimationController: errorController,
               controller: _pin,
               onCompleted: (code) async {
+                FocusScope.of(context).unfocus();
+                final result = await authprovider.checkCode(
+                    context,
+                    EasyLocalization.of(context)!.currentLocale!.languageCode,
+                    widget.phone,
+                    _pin!.text);
+                if (result['status'] == true) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => ResetNewPassword(phone:widget.phone)));
+                } else {
+                  setState(() {
+                    hasError = true;
+                  });
+                  showMyToast(context, result['error'], 'error');
+                }
+
                 // FocusScope.of(context).unfocus();
                 // if (widget.code != code) {
                 //   setState(() {
@@ -143,10 +168,13 @@ class _ResetPasswordCodeState extends State<ResetPasswordCode> {
           SizedBox(
             height: 28,
           ),
-          CustomButton(tr('send'), () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (ctx) => ResetNewPassword()));
-          })
+          Consumer<AuthProvider>(
+            builder: (ctx, data, ch) {
+              return data.isloadingCheckCode
+                  ? myLoadingWidget(context, MySettings.maincolor)
+                  : CustomButton(tr('send'), () {});
+            },
+          ),
         ],
       ),
     );

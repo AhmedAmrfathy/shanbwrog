@@ -50,55 +50,71 @@ Future<Map<dynamic, dynamic>> dioNetWork(
   }
   bool _isSocketException = false;
   Dio dio = new Dio();
-  Response response;
+  Response? response;
   if (methodType == 'post') {
-    response = await dio
-        .post(url!,
-            data: dioBody,
-            options: Options(
-                headers: dioHeaders,
-                validateStatus: (int? status) =>
-                    status == 500 ||
-                    status == 401 ||
-                    status == 422 ||
-                    status == 400 ||
-                    status! >= 200 && status! < 300 ||
-                    status == 304))
-        .catchError((onError) {
+    try {
+      response = await dio.post(url!,
+          data: dioBody,
+          options: Options(
+              headers: dioHeaders,
+              validateStatus: (int? status) =>
+              status == 500 ||
+                  status == 401 ||
+                  status == 422 ||
+                  status == 400 ||
+                  status! >= 200 && status < 300 ||
+                  status == 304));
+    } catch (error) {
       _isSocketException = true;
-    });
+    }
   } else if (methodType == 'put') {
-    response = await dio
-        .put(url!,
-            data: dioBody,
-            options: Options(
-                headers: dioHeaders,
-                validateStatus: (int? status) =>
-                    status == 500 ||
-                    status == 401 ||
-                    status == 422 ||
-                    status == 400 ||
-                    status! >= 200 && status! < 300 ||
-                    status == 304))
-        .catchError((onError) {
+    try {
+      response = await dio.put(url!,
+          data: dioBody,
+          options: Options(
+              headers: dioHeaders,
+              validateStatus: (int? status) =>
+              status == 500 ||
+                  status == 401 ||
+                  status == 422 ||
+                  status == 400 ||
+                  status! >= 200 && status < 300 ||
+                  status == 304));
+    } catch (error) {
       _isSocketException = true;
-    });
+    }
+    //  print(response.data.toString()+'sssssssssss');
   } else if (methodType == 'delete') {
-    response = await dio
-        .delete(url!,
-            data: dioBody,
-            options: Options(
-                headers: dioHeaders,
-                validateStatus: (int? status) =>
-                    status == 500 ||
-                    status == 401 ||
-                    status == 422 ||
-                    status == 400 ||
-                    status! >= 200 && status < 300 ||
-                    status == 304))
-        .catchError((onError) {
+    try {
+      response = await dio.delete(url!,
+          data: dioBody,
+          options: Options(
+              headers: dioHeaders,
+              validateStatus: (int? status) =>
+              status == 500 ||
+                  status == 401 ||
+                  status == 422 ||
+                  status == 400 ||
+                  status! >= 200 && status < 300 ||
+                  status == 304));
+    } catch (error) {
       _isSocketException = true;
-    });
+    }
+  } else if (methodType == 'get') {
+    try {
+      response = await dio.get(url!,
+          options: Options(
+              headers: dioHeaders,
+              validateStatus: (int? status) =>
+              status == 500 ||
+                  status == 401 ||
+                  status == 404 ||
+                  status == 400 ||
+                  status! >= 200 && status < 300 ||
+                  status == 304));
+    } catch (error) {
+      _isSocketException = true;
+    }
   } else if (methodType == 'get') {
     response = await dio
         .get(url!,
@@ -131,7 +147,7 @@ Future<Map<dynamic, dynamic>> dioNetWork(
       'data': null
     };
   }
-  if (response.statusCode == 500) {
+  if (response!.statusCode == 500) {
     print('statusCode : ' + response.statusCode.toString());
     return {
       'status': false,

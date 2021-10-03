@@ -35,7 +35,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     'خدمات المساج',
                     style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 19,
                         fontWeight: FontWeight.w600),
                   ),
                   Spacer(),
@@ -132,7 +132,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                         ' هذا النص هو مثال تجريبى فقد لما يمكن كتابته هذا النص هو مثال تجريبى فقد لما يمكن كتابته هذا النص هو مثال تجريبى فقد لما يمكن كتابته هذا النص هو مثال تجريبى فقد لما يمكن كتابته لما يمكن كتابته هذا النص هو مثال تجريبى فقد لما يمكن كتابته ',
                         style: TextStyle(
                             color: Color.fromRGBO(194, 195, 196, 1),
-                            fontSize: 17),
+                            fontSize: 16),
                       ),
                     ),
                     SizedBox(
@@ -145,7 +145,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             Center(
               child: CustomButton(tr('reserve'), () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                  return ReserveService();
+                  return ReserveService('');
                 }));
               }),
             ),

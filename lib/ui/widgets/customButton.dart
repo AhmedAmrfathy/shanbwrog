@@ -11,8 +11,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final devicesize = MediaQuery.of(context).size;
-    return
-      GestureDetector(
+    return GestureDetector(
       onTap: () {
         ontap();
       },
