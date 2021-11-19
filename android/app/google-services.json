@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "45790234305",
+    "project_id": "shanbwrog",
+    "storage_bucket": "shanbwrog.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45790234305:android:11fa94dfeba717784a7640",
+        "android_client_info": {
+          "package_name": "com.beestech.wa2ty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45790234305-7fu7kjr34molcvq8cb5b9i0elvscbq2b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFmYkTNkcRIOp65ruDT75ZvQ6ZJisiFFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45790234305-7fu7kjr34molcvq8cb5b9i0elvscbq2b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
