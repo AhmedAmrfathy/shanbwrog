@@ -1,4 +1,5 @@
 import 'package:shanbwrog/models/category.dart';
+import 'package:shanbwrog/models/offer.dart';
 
 class Reservation {
   int? id;
@@ -14,6 +15,7 @@ class Reservation {
   String? paymentMethod;
   String? categoryId;
   Category? category;
+  Offer? offer;
   String? userId;
   String? providerId;
 
@@ -31,6 +33,7 @@ class Reservation {
       this.paymentMethod,
       this.categoryId,
       this.category,
+      this.offer,
       this.userId,
       this.providerId});
 
@@ -49,7 +52,9 @@ class Reservation {
     categoryId = json['category_id'];
     category = (json['category'] != null
         ? new Category.fromJson(json['category'])
-        : null)!;
+        : null);
+    offer =
+        (json['offer'] != null ? new Offer.fromJson(json['offer']) : null);
     userId = json['user_id'];
     providerId = json['provider_id'];
   }
@@ -71,6 +76,10 @@ class Reservation {
     if (this.category != null) {
       data['category'] = this.category!.toJson();
     }
+    if (this.offer != null) {
+      data['offer'] = this.offer!.toJson();
+    }
+
     data['user_id'] = this.userId;
     data['provider_id'] = this.providerId;
     return data;

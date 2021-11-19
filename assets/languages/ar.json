@@ -153,5 +153,15 @@
   "offerdetails": "تفاصيل العرض",
   "time": "الوقت",
   "emptylist": "هذه القائمه فارغه",
-  "title": "العنوان"
+  "title": "العنوان",
+  "name": "الإسم",
+  "price": "السعر",
+  "addimage": "إضافة صوره",
+  "rateprovider": "قم بتقييم مقدم الخدمه",
+  "comment": "تعليق",
+  "filter": "تصفيه",
+  "modalrate": "تقييم",
+  "loginfirst": "قم بتسجيل الدخول اولا",
+  "providersofcategory": "مقدمى هذه الخدمه",
+  "loading": "برجاء الإنتظار , التنفيذ ..."
 }

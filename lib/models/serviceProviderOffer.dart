@@ -9,6 +9,9 @@ class ServiceProviderOffer {
   String? categoryId;
   String? createdAt;
   String? updatedAt;
+  String? address;
+  String? lat;
+  String? lng;
 
   ServiceProviderOffer(
       {this.id,
@@ -20,7 +23,10 @@ class ServiceProviderOffer {
       this.userId,
       this.categoryId,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.lng,
+      this.address,
+      this.lat});
 
   ServiceProviderOffer.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -33,6 +39,9 @@ class ServiceProviderOffer {
     categoryId = json['category_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    address = json['address'];
+    lat = json['lat'];
+    lng = json['lng'];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +56,9 @@ class ServiceProviderOffer {
     data['category_id'] = this.categoryId;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['address'] = this.address;
+    data['lat'] = this.lat;
+    data['lng'] = this.lng;
     return data;
   }
 }

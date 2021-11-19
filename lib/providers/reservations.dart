@@ -71,19 +71,34 @@ class ReservationsProvider with ChangeNotifier {
       "Accept-Language": lang,
       "Authorization": token
     };
-    Map<String, dynamic> body = {
-      'reservation_date': bodydata['reservation_date'],
-      'reservation_time': bodydata['reservation_time'],
-      'name': bodydata['name'],
-      'address': bodydata['address'],
-      'lat': bodydata['lat'],
-      'lng': bodydata['lng'],
-      'phone': bodydata['phone'],
-      'category_id': bodydata['category_id'],
-      'payment_method': bodydata['payment_method']
-    };
+    Map<String, dynamic> body;
+    if (bodydata['reserveOffer']) {
+      body = {
+        'reservation_date': bodydata['reservation_date'].toString(),
+        'reservation_time': bodydata['reservation_time'].toString(),
+        'name': bodydata['name'],
+        'address': bodydata['address'],
+        'lat': bodydata['lat'],
+        'lng': bodydata['lng'],
+        'phone': bodydata['phone'],
+        'offer_id': bodydata['offer_id'],
+        'payment_method': bodydata['payment_method']
+      };
+    } else {
+      body = {
+        'reservation_date': bodydata['reservation_date'].toString(),
+        'reservation_time': bodydata['reservation_time'].toString(),
+        'name': bodydata['name'],
+        'address': bodydata['address'],
+        'lat': bodydata['lat'],
+        'lng': bodydata['lng'],
+        'phone': bodydata['phone'],
+        'category_id': bodydata['category_id'],
+        'payment_method': bodydata['payment_method']
+      };
+    }
+    print('bodyyyyy' + body.toString());
 
-    print(body.toString());
     Map<dynamic, dynamic> response = await dioNetWork(
         appLanguage: lang,
         dioHeaders: headers,
@@ -91,7 +106,7 @@ class ReservationsProvider with ChangeNotifier {
         methodType: 'post',
         netWorkWorking: MySettings.netWorkWorking(),
         url: EndPoints.baseurl + EndPoints.segments['addreserve']);
-    print(response.toString());
+    print('rrrrrrrrrr' + '   ' + response.toString());
     isloadingAddingReservation = false;
     notifyListeners();
     if (response['status'] == false) {
@@ -127,6 +142,9 @@ class ReservationsProvider with ChangeNotifier {
     if (response['status'] == false) {
       return {'status': false, 'error': response['msg']};
     } else {
+      finishedmyReservations
+          .removeWhere((element) => element.id == reservationId);
+      notifyListeners();
       return {
         'status': true,
       };

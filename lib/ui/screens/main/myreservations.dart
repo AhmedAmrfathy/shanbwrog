@@ -4,8 +4,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/models/reservation.dart';
+import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/providers/reservations.dart';
 import 'package:shanbwrog/ui/general/appbar.dart';
+import 'package:shanbwrog/ui/serviceprovider/reservationInfo.dart';
 import 'package:shanbwrog/ui/widgets/emptyitem.dart';
 import 'package:shanbwrog/ui/widgets/futurebuilder.dart';
 import 'package:shanbwrog/ui/widgets/myToast.dart';
@@ -26,6 +28,11 @@ class _MyReservationsState extends State<MyReservations> {
   //   Reservation(type: 2),
   //   Reservation(type: 3)
   // ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,37 +91,242 @@ class _MyReservationsState extends State<MyReservations> {
                 height: 20,
               ),
               _newindex == 0
-                  ? ApiFutureBuilder(
-                      future: Provider.of<ReservationsProvider>(context,
-                              listen: false)
-                          .getMyReservations(
-                              context,
-                              EasyLocalization.of(context)!
-                                  .currentLocale!
-                                  .languageCode,
-                              'current'),
-                      consumer: Consumer<ReservationsProvider>(
-                        builder: (ctx, data, ch) {
-                          return data.isloadingMyReservations
-                              ? myLoadingWidget(context, MySettings.maincolor)
-                              : data.currentmyReservations.length == 0
-                                  ? ExplainItem(tr('emptylist'))
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount:
-                                          data.currentmyReservations.length,
-                                      itemBuilder: (ctx, index) {
-                                        return AnimationConfiguration
-                                            .staggeredList(
-                                          position: index,
-                                          duration: const Duration(
-                                              milliseconds: 1000),
-                                          child: SlideAnimation(
-                                            curve: Curves.easeIn,
-                                            verticalOffset: 0.0,
-                                            child: FlipAnimation(
-                                              flipAxis: FlipAxis.x,
+                  ? Provider.of<AuthProvider>(context, listen: false)
+                                  .userModel
+                                  .token ==
+                              null ||
+                          Provider.of<AuthProvider>(context, listen: false)
+                                  .userModel
+                                  .token ==
+                              ''
+                      ? Center(
+                          child: Text(tr('loginfirst')),
+                        )
+                      : ApiFutureBuilder(
+                          future: Provider.of<ReservationsProvider>(context,
+                                  listen: false)
+                              .getMyReservations(
+                                  context,
+                                  EasyLocalization.of(context)!
+                                      .currentLocale!
+                                      .languageCode,
+                                  'current'),
+                          consumer: Consumer<ReservationsProvider>(
+                            builder: (ctx, data, ch) {
+                              return data.isloadingMyReservations
+                                  ? myLoadingWidget(
+                                      context, MySettings.maincolor)
+                                  : data.currentmyReservations.length == 0
+                                      ? ExplainItem(tr('emptylist'))
+                                      : ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount:
+                                              data.currentmyReservations.length,
+                                          itemBuilder: (ctx, index) {
+                                            return AnimationConfiguration
+                                                .staggeredList(
+                                              position: index,
+                                              duration: const Duration(
+                                                  milliseconds: 1000),
+                                              child: SlideAnimation(
+                                                curve: Curves.easeIn,
+                                                verticalOffset: 0.0,
+                                                child: FlipAnimation(
+                                                  flipAxis: FlipAxis.x,
+                                                  child: Container(
+                                                    width:
+                                                        devicesize.width * .8,
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10),
+                                                    padding: EdgeInsets.all(15),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    12)),
+                                                        border: Border.all(
+                                                            color: data
+                                                                        .currentmyReservations[
+                                                                            index]
+                                                                        .status ==
+                                                                    '1'
+                                                                ? Colors.yellow
+                                                                : data.currentmyReservations[index].status ==
+                                                                        '2'
+                                                                    ? Colors
+                                                                        .green
+                                                                    : Colors
+                                                                        .red)),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          data
+                                                              .currentmyReservations[
+                                                                  index]
+                                                              .name!,
+                                                          style: TextStyle(
+                                                              fontSize: 19,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                data
+                                                                    .currentmyReservations[
+                                                                        index]
+                                                                    .reservationDate!,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                              ),
+                                                            ),
+                                                            IconButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .push(MaterialPageRoute(
+                                                                          builder:
+                                                                              (ctx) {
+                                                                    return ReservationInfo(
+                                                                        data.currentmyReservations[
+                                                                            index]);
+                                                                  }));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .arrow_forward_ios_rounded,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  size: 25,
+                                                                ))
+                                                          ],
+                                                        ),
+                                                        Container(
+                                                          width: 110,
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: data.currentmyReservations[index].status ==
+                                                                          '1'
+                                                                      ? Color.fromRGBO(
+                                                                          255,
+                                                                          244,
+                                                                          212,
+                                                                          1)
+                                                                      : data.currentmyReservations[index].status ==
+                                                                              '2'
+                                                                          ? Color.fromRGBO(
+                                                                              211,
+                                                                              238,
+                                                                              211,
+                                                                              1)
+                                                                          : Color.fromRGBO(
+                                                                              254,
+                                                                              224,
+                                                                              224,
+                                                                              1),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              15)),
+                                                          child: Center(
+                                                            child: Text(
+                                                              data.currentmyReservations[index].status ==
+                                                                      '1'
+                                                                  ? tr(
+                                                                      'waiting')
+                                                                  : data.currentmyReservations[index]
+                                                                              .status ==
+                                                                          '2'
+                                                                      ? tr('accepted')
+                                                                      : tr('refused'),
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: data.currentmyReservations[index].status ==
+                                                                          '1'
+                                                                      ? Colors
+                                                                          .amber
+                                                                      : data.currentmyReservations[index].status ==
+                                                                              2
+                                                                          ? Colors
+                                                                              .green
+                                                                          : Colors
+                                                                              .red),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
+                            },
+                          ),
+                        )
+                  : Provider.of<AuthProvider>(context, listen: false)
+                                  .userModel
+                                  .token ==
+                              null ||
+                          Provider.of<AuthProvider>(context, listen: false)
+                                  .userModel
+                                  .token ==
+                              ''
+                      ? Center(
+                          child: Text(tr('loginfirst')),
+                        )
+                      : ApiFutureBuilder(
+                          future: Provider.of<ReservationsProvider>(context,
+                                  listen: false)
+                              .getMyReservations(
+                                  context,
+                                  EasyLocalization.of(context)!
+                                      .currentLocale!
+                                      .languageCode,
+                                  'finish'),
+                          consumer: Consumer<ReservationsProvider>(
+                            builder: (ctx, data, ch) {
+                              return data.isloadingMyReservations
+                                  ? myLoadingWidget(
+                                      context, MySettings.maincolor)
+                                  : data.finishedmyReservations.length == 0
+                                      ? ExplainItem(tr('emptylist'))
+                                      : ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: data
+                                              .finishedmyReservations.length,
+                                          itemBuilder: (ctx, index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (ctx) {
+                                                  return ReservationInfo(
+                                                      data.finishedmyReservations[
+                                                          index]);
+                                                }));
+                                              },
                                               child: Container(
                                                 width: devicesize.width * .8,
                                                 margin: EdgeInsets.symmetric(
@@ -127,12 +339,12 @@ class _MyReservationsState extends State<MyReservations> {
                                                                 12)),
                                                     border: Border.all(
                                                         color: data
-                                                                    .currentmyReservations[
+                                                                    .finishedmyReservations[
                                                                         index]
                                                                     .status ==
                                                                 '1'
                                                             ? Colors.yellow
-                                                            : data.currentmyReservations[index]
+                                                            : data.finishedmyReservations[index]
                                                                         .status ==
                                                                     '2'
                                                                 ? Colors.green
@@ -143,7 +355,7 @@ class _MyReservationsState extends State<MyReservations> {
                                                   children: [
                                                     Text(
                                                       data
-                                                          .currentmyReservations[
+                                                          .finishedmyReservations[
                                                               index]
                                                           .name!,
                                                       style: TextStyle(
@@ -157,7 +369,7 @@ class _MyReservationsState extends State<MyReservations> {
                                                         Expanded(
                                                           child: Text(
                                                             data
-                                                                .currentmyReservations[
+                                                                .finishedmyReservations[
                                                                     index]
                                                                 .reservationDate!,
                                                             style: TextStyle(
@@ -169,220 +381,81 @@ class _MyReservationsState extends State<MyReservations> {
                                                                         .w600),
                                                           ),
                                                         ),
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios_rounded,
-                                                              color:
-                                                                  Colors.black,
-                                                              size: 25,
-                                                            ))
+                                                        Consumer<
+                                                            ReservationsProvider>(
+                                                          builder:
+                                                              (ctx, data, ch) {
+                                                            return data
+                                                                    .isloadingDeleting
+                                                                ? myLoadingWidget(
+                                                                    context,
+                                                                    MySettings
+                                                                        .maincolor)
+                                                                : IconButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      await Provider.of<ReservationsProvider>(
+                                                                              context,
+                                                                              listen:
+                                                                                  false)
+                                                                          .deleteReservation(
+                                                                              context: context,
+                                                                              lang: EasyLocalization.of(context)!.currentLocale!.languageCode,
+                                                                              reservationId: data.finishedmyReservations[index].id!)
+                                                                          .then((value) {
+                                                                        if (value['status'] ==
+                                                                            false) {
+                                                                          showMyToast(
+                                                                              context,
+                                                                              value['error'],
+                                                                              'error');
+                                                                        } else {}
+                                                                      });
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .delete,
+                                                                      color: Colors
+                                                                          .red,
+                                                                      size: 25,
+                                                                    ));
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
                                                     Container(
                                                       width: 110,
                                                       height: 40,
                                                       decoration: BoxDecoration(
-                                                          color: data
-                                                                      .currentmyReservations[
-                                                                          index]
-                                                                      .status ==
-                                                                  '1'
-                                                              ? Color.fromRGBO(
-                                                                  255,
-                                                                  244,
-                                                                  212,
-                                                                  1)
-                                                              : data.currentmyReservations[index].status ==
-                                                                      '2'
-                                                                  ? Color.fromRGBO(
-                                                                      211,
-                                                                      238,
-                                                                      211,
-                                                                      1)
-                                                                  : Color
-                                                                      .fromRGBO(
-                                                                          254,
-                                                                          224,
-                                                                          224,
-                                                                          1),
+                                                          color: Color.fromRGBO(
+                                                              254, 224, 224, 1),
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(15)),
+                                                                  .circular(
+                                                                      15)),
                                                       child: Center(
                                                         child: Text(
-                                                          data
-                                                                      .currentmyReservations[
-                                                                          index]
-                                                                      .status ==
-                                                                  '1'
-                                                              ? tr('waiting')
-                                                              : data.currentmyReservations[index]
-                                                                          .status ==
-                                                                      '2'
-                                                                  ? tr('accepted')
-                                                                  : tr('refused'),
+                                                          tr('completed'),
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              color: data
-                                                                          .currentmyReservations[
-                                                                              index]
-                                                                          .status ==
-                                                                      '1'
-                                                                  ? Colors.amber
-                                                                  : data.currentmyReservations[index].status ==
-                                                                          2
-                                                                      ? Colors
-                                                                          .green
-                                                                      : Colors
-                                                                          .red),
+                                                              color:
+                                                                  Colors.red),
                                                         ),
                                                       ),
                                                     )
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        );
-                                      });
-                        },
-                      ),
-                    )
-                  : ApiFutureBuilder(
-                      future: Provider.of<ReservationsProvider>(context,
-                              listen: false)
-                          .getMyReservations(
-                              context,
-                              EasyLocalization.of(context)!
-                                  .currentLocale!
-                                  .languageCode,
-                              'finish'),
-                      consumer: Consumer<ReservationsProvider>(
-                        builder: (ctx, data, ch) {
-                          return data.isloadingMyReservations
-                              ? myLoadingWidget(context, MySettings.maincolor)
-                              : data.finishedmyReservations.length == 0
-                                  ? ExplainItem(tr('emptylist'))
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount:
-                                          data.finishedmyReservations.length,
-                                      itemBuilder: (ctx, index) {
-                                        return Container(
-                                          width: devicesize.width * .8,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          padding: EdgeInsets.all(15),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12)),
-                                              border: Border.all(
-                                                  color: data
-                                                              .finishedmyReservations[
-                                                                  index]
-                                                              .status ==
-                                                          '1'
-                                                      ? Colors.yellow
-                                                      : data.finishedmyReservations[index]
-                                                                  .status ==
-                                                              '2'
-                                                          ? Colors.green
-                                                          : Colors.red)),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                data
-                                                    .finishedmyReservations[
-                                                        index]
-                                                    .name!,
-                                                style: TextStyle(
-                                                    fontSize: 19,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      data
-                                                          .finishedmyReservations[
-                                                              index]
-                                                          .reservationDate!,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.grey,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                      onPressed: () async {
-                                                        await Provider.of<
-                                                                    ReservationsProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .deleteReservation(
-                                                                reservationId: data
-                                                                    .finishedmyReservations[
-                                                                        index]
-                                                                    .id!)
-                                                            .then((value) {
-                                                          if (value['status'] ==
-                                                              false) {
-                                                            showMyToast(
-                                                                context,
-                                                                value['error'],
-                                                                'error');
-                                                          } else {}
-                                                        });
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                        size: 25,
-                                                      ))
-                                                ],
-                                              ),
-                                              Container(
-                                                width: 110,
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                    color: Color.fromRGBO(
-                                                        254, 224, 224, 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                child: Center(
-                                                  child: Text(
-                                                    tr('completed'),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.red),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      });
-                        },
-                      ),
-                    )
+                                            );
+                                          });
+                            },
+                          ),
+                        )
             ],
           ),
         ),

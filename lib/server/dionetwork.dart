@@ -58,7 +58,7 @@ Future<Map<dynamic, dynamic>> dioNetWork(
           options: Options(
               headers: dioHeaders,
               validateStatus: (int? status) =>
-              status == 500 ||
+                  status == 500 ||
                   status == 401 ||
                   status == 422 ||
                   status == 400 ||
@@ -74,7 +74,7 @@ Future<Map<dynamic, dynamic>> dioNetWork(
           options: Options(
               headers: dioHeaders,
               validateStatus: (int? status) =>
-              status == 500 ||
+                  status == 500 ||
                   status == 401 ||
                   status == 422 ||
                   status == 400 ||
@@ -91,7 +91,7 @@ Future<Map<dynamic, dynamic>> dioNetWork(
           options: Options(
               headers: dioHeaders,
               validateStatus: (int? status) =>
-              status == 500 ||
+                  status == 500 ||
                   status == 401 ||
                   status == 422 ||
                   status == 400 ||
@@ -106,7 +106,7 @@ Future<Map<dynamic, dynamic>> dioNetWork(
           options: Options(
               headers: dioHeaders,
               validateStatus: (int? status) =>
-              status == 500 ||
+                  status == 500 ||
                   status == 401 ||
                   status == 404 ||
                   status == 400 ||

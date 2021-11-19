@@ -4,27 +4,42 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/models/category.dart';
+import 'package:shanbwrog/models/offer.dart';
+import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/providers/home.dart';
 import 'package:shanbwrog/ui/screens/main/reserveService.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/futurebuilder.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
 import 'package:shanbwrog/ui/widgets/my_loading_widget.dart';
+import 'package:shanbwrog/ui/widgets/photopreview.dart';
 
 class OfferDetails extends StatefulWidget {
   final int? offerId;
   final String? categoryid;
+  final Offer? offer;
 
-  OfferDetails({this.offerId, this.categoryid});
+  OfferDetails({this.offerId, this.categoryid, this.offer});
 
   @override
   _OfferDetailsState createState() => _OfferDetailsState();
 }
 
 class _OfferDetailsState extends State<OfferDetails> {
-  List<String> images = [
-    'https://media-cdn.tripadvisor.com/media/photo-s/0c/a3/67/9d/maestral-resort-casino.jpg',
-    'https://mostaql.hsoubcdn.com/uploads/thumbnails/835649/5fb1c7c34bc0a/Beauty-Centre-1.jpg'
-  ];
+  late List<String?> images;
+
+  @override
+  void initState() {
+    images = [
+      widget.offer!.img,
+      widget.offer!.img2,
+      widget.offer!.img3,
+      widget.offer!.img4
+    ];
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,17 +92,26 @@ class _OfferDetailsState extends State<OfferDetails> {
                           child: CarouselSlider(
                         options: CarouselOptions(autoPlay: true),
                         items: images
-                            .map((item) => Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: Center(
-                                      child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(
-                                      item,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
+                            .map((item) => GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(builder: (ctx) {
+                                      return PhotoPreview(item!);
+                                    }));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: Center(
+                                        child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        item!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                  ),
                                 ))
                             .toList(),
                       )),
@@ -174,19 +198,53 @@ class _OfferDetailsState extends State<OfferDetails> {
                       ),
                       Center(
                         child: CustomButton(tr('reserve'), () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (ctx) {
-                                print(data.serviceProviderOfferDetails.categoryId!+'wwwwww');
-                            return ReserveService(
-                                data.serviceProviderOfferDetails.categoryId!);
-                          }));
+                          if (Provider.of<AuthProvider>(context, listen: false)
+                                      .userModel
+                                      .token ==
+                                  null ||
+                              Provider.of<AuthProvider>(context, listen: false)
+                                      .userModel
+                                      .token ==
+                                  '') {
+                            showMyToast(context, tr('loginfirst'), 'error');
+                          } else {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (ctx) {
+                              return ReserveService(
+                                data.serviceProviderOfferDetails.id.toString()!,
+                                reserveOffer: true,
+                                offer: data.serviceProviderOfferDetails,
+                              );
+                            }));
+                          }
                         }),
                       ),
                       SizedBox(
                         height: 15,
                       ),
                       Center(
-                        child: CustomButton(tr('sendgift'), () {}),
+                        child: CustomButton(tr('sendgift'), () {
+                          if (Provider.of<AuthProvider>(context, listen: false)
+                                      .userModel
+                                      .token ==
+                                  null ||
+                              Provider.of<AuthProvider>(context, listen: false)
+                                      .userModel
+                                      .token ==
+                                  '') {
+                            showMyToast(context, tr('loginfirst'), 'error');
+                          } else {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (ctx) {
+                              return ReserveService(
+                                data.serviceProviderOfferDetails.id.toString()!,
+                                reserveOffer: true,
+                                offer: data.serviceProviderOfferDetails,
+                                sendGift: true,
+                              );
+                            }));
+                          }
+                        }),
                       ),
 
                       // Container(

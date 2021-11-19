@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fcm_config/fcm_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
@@ -157,25 +158,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? myLoadingWidget(
                                       context, MySettings.maincolor)
                                   : CustomButton(tr('login'), () async {
+                                      FocusScope.of(context).unfocus();
                                       if (_formkey.currentState!.validate()) {
-                                        final result = await authprovider.login(
-                                            context,
-                                            EasyLocalization.of(context)!
-                                                .currentLocale!
-                                                .languageCode,
-                                            _email.text,
-                                            _password.text);
-                                        if (result['status'] == true) {
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (ctx) =>
-                                                          MainActivity(authprovider.userModel.userType!)),
-                                                  (route) => false);
-                                        } else {
-                                          showMyToast(context, result['error'],
-                                              'error');
-                                        }
+                                        FCMConfig.messaging
+                                            .getToken()
+                                            .then((fcmToken) async {
+                                          final result =
+                                              await authprovider.login(
+                                                  context,
+                                                  EasyLocalization.of(context)!
+                                                      .currentLocale!
+                                                      .languageCode,
+                                                  _email.text,
+                                                  _password.text,
+                                                  fcmToken!);
+                                          if (result['status'] == true) {
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (ctx) =>
+                                                            MainActivity(
+                                                                authprovider
+                                                                    .userModel
+                                                                    .userType!)),
+                                                    (route) => false);
+                                          } else {
+                                            showMyToast(context,
+                                                result['error'], 'error');
+                                          }
+                                        });
                                       }
                                     });
                             },
@@ -187,7 +198,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             onTap: () async {
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
-                                      builder: (ctx) => MainActivity(authprovider.userModel.userType!)),
+                                      builder: (ctx) => MainActivity(
+                                          authprovider.userModel == null ||
+                                                  authprovider
+                                                          .userModel.userType ==
+                                                      null
+                                              ? 'visitor'
+                                              : authprovider
+                                                  .userModel.userType!)),
                                   (route) => false);
                             },
                             child: Text(

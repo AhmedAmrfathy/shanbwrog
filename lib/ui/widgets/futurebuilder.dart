@@ -6,10 +6,10 @@ import 'emptyitem.dart';
 import 'my_loading_widget.dart';
 
 class ApiFutureBuilder extends StatelessWidget {
-  final Future? future;
-  final Widget? consumer;
+  final Future future;
+  final Widget consumer;
 
-  ApiFutureBuilder({this.future, this.consumer});
+  ApiFutureBuilder({required this.future, required this.consumer});
 
   @override
   Widget build(BuildContext context) {

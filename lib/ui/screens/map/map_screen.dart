@@ -4,6 +4,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/ui/screens/map/search_map_place/search_map_place.dart';
@@ -73,19 +76,24 @@ class _MapRegisterationState extends State<MapRegisteration> {
                         _mapController.complete(controller);
                       },
                       onTap: (LatLng selectedlocation) async {
-                        // final coordinates = new Coordinates(
-                        //     selectedlocation.latitude,
-                        //     selectedlocation.longitude);
+                        final coordinates = new Coordinates(
+                            selectedlocation.latitude,
+                            selectedlocation.longitude);
+                        print(selectedlocation.latitude);
+                        print(selectedlocation.longitude);
+
+                        var addresses = await Geocoder.local
+                            .findAddressesFromCoordinates(coordinates);
                         // final addresses = await Geocoder.google(
-                        //         'AIzaSyDJZeYDmZKwcHVaO9APCWP_04lYzaNK0o4',
+                        //         'AIzaSyCDzltRvdehaa-81Gh7T0JGW-s3x6igHMg',
                         //         language: 'ar')
                         //     .findAddressesFromCoordinates(coordinates);
-                        // final first = addresses.first;
-                        // print(first.addressLine + 'ffffffffffff');
-                        // setState(() {
-                        //   pickedLocation = selectedlocation;
-                        //   savedaddressname = first.addressLine;
-                        // });
+
+                        final first = addresses.first;
+                        setState(() {
+                          pickedLocation = selectedlocation;
+                          savedaddressname = first.addressLine;
+                        });
                       },
                       markers: pickedLocation == null
                           ? {}
@@ -108,7 +116,7 @@ class _MapRegisterationState extends State<MapRegisteration> {
                               child: SearchMapPlaceWidget(
                                 placeholder: tr('search'),
                                 apiKey:
-                                    'AIzaSyDugp33a9YA1OZowUodVHw224TTXk1VAWw',
+                                    'AIzaSyCDzltRvdehaa-81Gh7T0JGW-s3x6igHMg',
                                 noPlacesErrorMessage: 'error',
                                 noPlacesErrorMessageStyle:
                                     TextStyle(color: Colors.red),

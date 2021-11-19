@@ -15,12 +15,12 @@ class AuthProvider with ChangeNotifier {
   List<Basic> countries = [];
   Basic? selectedCountry;
   bool isloadingCountries = false;
+  String? getcountiesError = null;
   bool isloadingRegister = false;
   bool isloadingLogin = false;
   bool isloadingSendCode = false;
   bool isloadingCheckCode = false;
   bool isloadingChangePassword = false;
-
   List<Basic> cities = [];
   Basic? selectedCity;
   bool isloadingCities = false;
@@ -39,6 +39,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<Map<String, dynamic>> getCountries(
       BuildContext context, String lang) async {
+    getcountiesError = null;
     Future.delayed(Duration(milliseconds: 1), () {
       isloadingCountries = true;
       notifyListeners();
@@ -56,6 +57,7 @@ class AuthProvider with ChangeNotifier {
     isloadingCountries = false;
     notifyListeners();
     if (response['status'] == false) {
+      getcountiesError = response['msg'];
       return {'status': false, 'error': response['msg']};
     } else {
       Map<String, dynamic> getCategorie = await getCategories(context, lang);
@@ -166,8 +168,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> login(
-      BuildContext context, String lang, String email, String password) async {
+  Future<Map<String, dynamic>> login(BuildContext context, String lang,
+      String email, String password, String fcmtoken) async {
     Future.delayed(Duration(milliseconds: 1), () {
       isloadingLogin = true;
       notifyListeners();
@@ -175,7 +177,11 @@ class AuthProvider with ChangeNotifier {
     Map<String, dynamic> headers = {
       "Accept-Language": lang,
     };
-    Map<String, dynamic> body = {"email": email, "password": password};
+    Map<String, dynamic> body = {
+      "email": email,
+      "password": password,
+      "mobile_token": fcmtoken
+    };
 
     Map<dynamic, dynamic> response = await dioNetWork(
         appLanguage: lang,
@@ -289,10 +295,66 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> autoAuthenticate() async {
+    try {
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences pref = await _prefs;
+      final String? usertoken = pref.getString('token');
+      final String? usertype = pref.getString('usertype');
+      userModel.userType = usertype;
+      if (usertoken != null) {
+        userModel.token = usertoken;
+        userModel.name = pref.getString('name');
+        userModel.email = pref.getString('email');
+        userModel.id = pref.getInt('id');
+        userModel.userType = usertype;
+
+        notifyListeners();
+        return true;
+      } else {
+        print('فى حاجه متخزنه ب null فى اللوجن');
+        return false;
+      }
+    } catch (err) {
+      print('فى حاجه متخزنه ب null فى اللوجن');
+      return false;
+    }
+  }
+
   Future<String> saveUserDataToSharedPref(Map<String, dynamic> userdata) async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences pref = await _prefs;
     pref.setString('token', userdata['token']);
+    pref.setString('email', userdata['email']);
+    pref.setString('name', userdata['name']);
+    pref.setString('usertype', userdata['user_type']);
+    pref.setInt('id', userdata['id']);
+    if (userModel.userType == 'provider') {
+      try {
+        pref.setString('image', userModel.images![0].img!);
+        pref.setBool('local', false);
+      } catch (error) {}
+    } else {
+      try {
+        pref.setString('image', userdata['avatar']);
+        pref.setBool('local', false);
+      } catch (error) {}
+    }
+
     return userdata['token'];
+  }
+
+  Future<bool> logOut() async {
+    userModel = UserModel();
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences pref = await _prefs;
+    try {
+      pref.remove('token');
+      pref.remove('image');
+      notifyListeners();
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

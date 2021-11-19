@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fcm_config/fcm_config.dart';
 import 'package:flutter/material.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/ui/screens/account/notifications.dart';
-import 'package:shanbwrog/ui/screens/main/reservationInfo.dart';
+import 'package:shanbwrog/ui/serviceprovider/reservationInfo.dart';
 import 'package:shanbwrog/ui/screens/main/searchFragment.dart';
 import 'package:shanbwrog/ui/serviceprovider/reservationFragment.dart';
 import 'package:shanbwrog/ui/serviceprovider/serviceProviderMainFragment.dart';
@@ -14,14 +15,16 @@ import 'myreservations.dart';
 
 class MainActivity extends StatefulWidget {
   final String usertype;
+  int? navigateIndex;
 
-  MainActivity(this.usertype);
+  MainActivity(this.usertype, {this.navigateIndex});
 
   @override
   _MainActivityState createState() => _MainActivityState();
 }
 
-class _MainActivityState extends State<MainActivity> {
+class _MainActivityState extends State<MainActivity>
+    with FCMNotificationClickMixin {
   List<Widget> getfragment(Size devicesize, int currentindex) {
     return [
       widget.usertype == 'provider'
@@ -52,7 +55,7 @@ class _MainActivityState extends State<MainActivity> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
                   return Notifications();
                 }));
               },
@@ -87,6 +90,15 @@ class _MainActivityState extends State<MainActivity> {
   }
 
   int currentindex = 0;
+
+  @override
+  void initState() {
+    if (widget.navigateIndex != null) {
+      currentindex = widget.navigateIndex!;
+    }
+    // TODO: implement
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,5 +159,13 @@ class _MainActivityState extends State<MainActivity> {
         ],
       ),
     );
+  }
+
+  @override
+  void onClick(RemoteMessage notification) {
+    // Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+    //   return MyAccount();
+    // }));
+    // // TODO: implement onClick
   }
 }

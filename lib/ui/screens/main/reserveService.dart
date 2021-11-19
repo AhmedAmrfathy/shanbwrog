@@ -3,14 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
+import 'package:shanbwrog/models/category.dart';
+import 'package:shanbwrog/models/offer.dart';
+import 'package:shanbwrog/models/serviceProviderOffer.dart';
+import 'package:shanbwrog/providers/Auth.dart';
 import 'package:shanbwrog/providers/reservations.dart';
 import 'package:shanbwrog/ui/screens/main/payment.dart';
+import 'package:shanbwrog/ui/screens/map/map_screen.dart';
 import 'package:shanbwrog/ui/widgets/formitem.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
 
 class ReserveService extends StatefulWidget {
-  final String categoryid;
+  final String id;
+  bool? reserveOffer;
+  bool? sendGift;
+  ServiceProviderOffer? offer;
+  Category? service;
 
-  ReserveService(this.categoryid);
+  ReserveService(this.id,
+      {this.reserveOffer, this.sendGift = false, this.offer, this.service});
 
   @override
   _ReserveServiceState createState() => _ReserveServiceState();
@@ -23,6 +34,8 @@ class _ReserveServiceState extends State<ReserveService> {
   TextEditingController _username = TextEditingController();
   TextEditingController _phone = TextEditingController();
   TextEditingController _time = TextEditingController();
+  String userLat = '';
+  String userLng = '';
 
   DateTime? pickeddate;
 
@@ -56,12 +69,14 @@ class _ReserveServiceState extends State<ReserveService> {
 
   TimeOfDay _initial = TimeOfDay.now().replacing(minute: 30);
   TimeOfDay selectedTime = TimeOfDay.now().replacing(minute: 30);
+  late String timeeeee;
 
   Future<Null> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _initial,
     );
+    timeeeee = picked!.format(context);
     if (picked != null)
       setState(() {
         selectedTime = picked;
@@ -70,6 +85,25 @@ class _ReserveServiceState extends State<ReserveService> {
         String _alltime = _minute + ' : ' + _hour;
         _time.text = _alltime;
       });
+  }
+
+  @override
+  void initState() {
+    _address.text = (widget.service == null
+        ? widget.offer!.address
+        : widget.service!.address)!;
+
+    userLat =
+        (widget.service == null ? widget.offer!.lat : widget.service!.lat)!;
+
+    userLng =
+        (widget.service == null ? widget.offer!.lng : widget.service!.lng)!;
+    if (widget.sendGift == false) {
+      _username.text =
+          Provider.of<AuthProvider>(context, listen: false).userModel.name!;
+    }
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -132,9 +166,11 @@ class _ReserveServiceState extends State<ReserveService> {
                   SizedBox(
                     height: 20,
                   ),
-                  FormItemWidget(
+                  StatefulBuilder(builder: (ctx, setNstate) {
+                    return FormItemWidget(
                       fill: true,
                       fillingcolor: Colors.white,
+                      readonly: true,
                       bordercolor: Colors.grey,
                       enablingborder: true,
                       borderRadious: 12,
@@ -144,12 +180,26 @@ class _ReserveServiceState extends State<ReserveService> {
                         Icons.location_on_sharp,
                         color: MySettings.maincolor,
                       ),
-                      textEditingController: _address,
                       validation: (String? value) {
                         if (value == null || value.isEmpty) {
                           return tr('requiredfield');
                         }
-                      }),
+                      },
+                      textEditingController: _address,
+                      ontap: () async {
+                        // await Navigator.of(context)
+                        //     .push(MaterialPageRoute(builder: (ctx) {
+                        //   return MapRegisteration();
+                        // })).then((value) {
+                        //   setNstate(() {
+                        //     _address.text = value['placename'];
+                        //     userLat = value['lat'].toString();
+                        //     userLng = value['long'].toString();
+                        //   });
+                        // });
+                      },
+                    );
+                  }),
                   SizedBox(
                     height: 20,
                   ),
@@ -202,6 +252,7 @@ class _ReserveServiceState extends State<ReserveService> {
                       onInputValidated: (bool value) {
                         print(value);
                       },
+                      countries: ['SA'],
                       selectorConfig: SelectorConfig(
                         selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
                       ),
@@ -251,20 +302,47 @@ class _ReserveServiceState extends State<ReserveService> {
                   ),
                   GestureDetector(
                       onTap: () {
-                        if (_formkey.currentState!.validate()) {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (ctx) {
-                            return PaymentScreen({
-                              'reservation_date': _appointment.text,
-                              'reservation_time': _time.text,
-                              'name': _username.text,
-                              'address': 'jhjgj',
-                              'lat': '23',
-                              'lng': '333',
-                              'phone': _phone.text,
-                              'category_id': widget.categoryid,
-                            });
-                          }));
+                        if (Provider.of<AuthProvider>(context, listen: false)
+                                    .userModel
+                                    .token ==
+                                null ||
+                            Provider.of<AuthProvider>(context, listen: false)
+                                    .userModel
+                                    .token ==
+                                '') {
+                          showMyToast(context, tr('loginfirst'), 'error');
+                        } else {
+                          if (_formkey.currentState!.validate()) {
+                            DateTime time = DateTime.parse(_appointment.text);
+                            String formattedDate =
+                                DateFormat('dd/MM/yyyy').format(time);
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (ctx) {
+                              return widget.reserveOffer!
+                                  ? PaymentScreen({
+                                      'reservation_date': formattedDate,
+                                      'reservation_time': timeeeee,
+                                      'name': _username.text,
+                                      'address': _address.text,
+                                      'lat': userLat,
+                                      'lng': userLng,
+                                      'phone': _phone.text,
+                                      'offer_id': widget.id,
+                                      'reserveOffer': true
+                                    })
+                                  : PaymentScreen({
+                                      'reservation_date': formattedDate,
+                                      'reservation_time': timeeeee,
+                                      'name': _username.text,
+                                      'address': _address.text,
+                                      'lat': userLat,
+                                      'lng': userLng,
+                                      'phone': _phone.text,
+                                      'category_id': widget.id,
+                                      'reserveOffer': false
+                                    });
+                            }));
+                          }
                         }
                       },
                       child: Container(

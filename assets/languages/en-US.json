@@ -153,7 +153,26 @@
   "offerdetails": "Offer Details",
   "time": "Time",
   "emptylist": "Empty List",
-  "title": "Title"
+  "title": "Title",
+  "name": "Name",
+  "price": "Price",
+  "addimage": "Add Image",
+  "rateprovider": "Rate Service Provider",
+  "comment": "Comment",
+  "filter": "filter",
+  "modalrate": "Rate",
+  "loginfirst": "please login first",
+  "providersofcategory": "Providers Of This Category",
+  "loading": "Loading , please wait ..."
+
+
+
+
+
+
+
+
+
 
 
 

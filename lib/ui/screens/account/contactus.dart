@@ -5,9 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/models/basic.dart';
 import 'package:shanbwrog/providers/Auth.dart';
+import 'package:shanbwrog/providers/settings.dart';
 import 'package:shanbwrog/ui/general/appbar.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/formitem.dart';
+import 'package:shanbwrog/ui/widgets/myToast.dart';
+import 'package:shanbwrog/ui/widgets/my_loading_widget.dart';
 
 class ContactUs extends StatefulWidget {
   @override
@@ -19,6 +22,8 @@ class _ContactUsState extends State<ContactUs> {
   TextEditingController _email = TextEditingController();
   TextEditingController _phone = TextEditingController();
   TextEditingController _message = TextEditingController();
+  TextEditingController _reason = TextEditingController();
+
   final _formkey = GlobalKey<FormState>();
 
   @override
@@ -54,47 +59,64 @@ class _ContactUsState extends State<ContactUs> {
                     }
                   }),
               SizedBox(
-                height: 18,
+                height: 20,
               ),
-              Container(
-                width: devicesize.width * .8,
-                child: DropdownButtonFormField(
-                    hint: Text(
-                      tr('determinereason'),
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    style: TextStyle(color: Colors.grey, fontSize: 19),
-                    decoration: InputDecoration(
-                        contentPadding: devicesize.width < 768
-                            ? EdgeInsets.all(15)
-                            : EdgeInsets.all(24),
-                        filled: true,
-                        fillColor: Colors.white,
-                        errorBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(12)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey.withOpacity(.8)),
-                            borderRadius: BorderRadius.circular(12))),
-                    value: authlistener.selected,
-                    items: authlistener.countries
-                        .map<DropdownMenuItem<Basic>>(
-                            (item) => DropdownMenuItem(
-                                  child: Text(item.id.toString()),
-                                  value: item,
-                                ))
-                        .toList(),
-                    onChanged: (Basic? basic) {},
-                    validator: (value) {
-                      if (value == null) {
-                        return tr('requiredfield');
-                      }
-                    }),
-              ),
+              FormItemWidget(
+                  fill: true,
+                  fillingcolor: Colors.white,
+                  bordercolor: Colors.grey,
+                  enablingborder: true,
+                  borderRadious: 12,
+                  label: tr('determinereason'),
+                  labelStyle: TextStyle(color: Colors.grey, fontSize: 19),
+                  textEditingController: _reason,
+                  validation: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return tr('requiredfield');
+                    }
+                  }),
               SizedBox(
                 height: 18,
               ),
+              // Container(
+              //   width: devicesize.width * .8,
+              //   child: DropdownButtonFormField(
+              //       hint: Text(
+              //         tr('determinereason'),
+              //         style: TextStyle(color: Colors.grey),
+              //       ),
+              //       style: TextStyle(color: Colors.grey, fontSize: 19),
+              //       decoration: InputDecoration(
+              //           contentPadding: devicesize.width < 768
+              //               ? EdgeInsets.all(15)
+              //               : EdgeInsets.all(24),
+              //           filled: true,
+              //           fillColor: Colors.white,
+              //           errorBorder: OutlineInputBorder(
+              //               borderSide: BorderSide(color: Colors.red),
+              //               borderRadius: BorderRadius.circular(12)),
+              //           enabledBorder: OutlineInputBorder(
+              //               borderSide:
+              //                   BorderSide(color: Colors.grey.withOpacity(.8)),
+              //               borderRadius: BorderRadius.circular(12))),
+              //       value: authlistener.selected,
+              //       items: authlistener.countries
+              //           .map<DropdownMenuItem<Basic>>(
+              //               (item) => DropdownMenuItem(
+              //                     child: Text(item.id.toString()),
+              //                     value: item,
+              //                   ))
+              //           .toList(),
+              //       onChanged: (Basic? basic) {},
+              //       validator: (value) {
+              //         if (value == null) {
+              //           return tr('requiredfield');
+              //         }
+              //       }),
+              // ),
+              // SizedBox(
+              //   height: 18,
+              // ),
               FormItemWidget(
                   fill: true,
                   fillingcolor: Colors.white,
@@ -191,10 +213,35 @@ class _ContactUsState extends State<ContactUs> {
               SizedBox(
                 height: 24,
               ),
-              CustomButton(tr('send'), () {
-                if(_formkey.currentState!.validate()){
-                }
-              })
+              Consumer<SettingsProvider>(
+                builder: (ctx, data, ch) {
+                  return data.isloadingAddingContact
+                      ? myLoadingWidget(context, MySettings.maincolor)
+                      : CustomButton(tr('send'), () async {
+                          if (_formkey.currentState!.validate()) {
+                            await data.addContact(
+                                context,
+                                EasyLocalization.of(context)!
+                                    .currentLocale!
+                                    .languageCode,
+                                {
+                                  "reason": _reason.text,
+                                  "name": _username.text,
+                                  "phone": _phone.text,
+                                  "email": _email.text,
+                                  "message": _message.text
+                                }).then((value) {
+                              if (value['status'] == true) {
+                                showMyToast(context, value['msg'], 'success');
+                                Navigator.of(context).pop();
+                              } else {
+                                showMyToast(context, value['error'], 'error');
+                              }
+                            });
+                          }
+                        });
+                },
+              ),
             ],
           ),
         ),

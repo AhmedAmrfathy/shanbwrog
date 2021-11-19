@@ -5,6 +5,7 @@ import 'package:shanbwrog/Settings/MySettings.dart';
 import 'package:shanbwrog/models/reservation.dart';
 import 'package:shanbwrog/providers/reservations.dart';
 import 'package:shanbwrog/ui/general/appbar.dart';
+import 'package:shanbwrog/ui/screens/main/mainActivity.dart';
 import 'package:shanbwrog/ui/screens/main/myreservations.dart';
 import 'package:shanbwrog/ui/widgets/customButton.dart';
 import 'package:shanbwrog/ui/widgets/myToast.dart';
@@ -268,9 +269,15 @@ class _SuccessPaymentState extends State<SuccessPayment> {
                   height: devicesize.height * .05,
                 ),
                 CustomButton(tr('myreservations'), () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                    return MyReservations();
-                  }));
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (ctx) => MainActivity(
+                                'user',
+                                navigateIndex: 2,
+                              )),
+                      (route) => false);
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                  //   return MyReservations();
                 })
               ],
             ),

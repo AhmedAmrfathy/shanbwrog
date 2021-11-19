@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shanbwrog/Settings/MySettings.dart';
 
 class LoadingDialog extends StatelessWidget {
   final Color? backgroundColor;
@@ -9,7 +10,7 @@ class LoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: backgroundColor,
+      backgroundColor: MySettings.secondarycolor.withOpacity(.4),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.all(15),
